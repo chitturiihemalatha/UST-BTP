@@ -13,7 +13,7 @@ type AmountT : Decimal(10,2)@(
     sap.unit:'CURRENCY_CODE'
 );
  
-aspect Amount: {
+pect Amount: {
     CURRENCY: Currency;
     GROSS_AMOUNT: AmountT @(title : '{i18n>GrossAmount}');
     NET_AMOUNT: AmountT @(title : '{i18n>NetAmount}');
