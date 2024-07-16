@@ -1,6 +1,6 @@
 namespace anubhav.db;
  
-using { cuid, managed, temporal, Currency, Country } from '@sap/cds/common';
+using { cuid, managed, temporal, Currency } from '@sap/cds/common';
 using { anubhav.common } from './commons';
  
 context master {
@@ -65,14 +65,14 @@ context master {
         Currency: Currency;
         salaryAmount: common.AmountT;
         accountNumber: String(16);
-        bankId: String(8);
+        bankId: String(40);
         bankName: String(64);
     }
 }
  
 context transaction {
-    entity purchaseorder: common.Amount,cuid{
-       // key NODE_KEY: common.Guid @title : '{i18n>PO_NODE_KEY}';
+    entity purchaseorder: common.Amount, cuid{
+        //key NODE_KEY: common.Guid @title : '{i18n>PO_NODE_KEY}';
         PO_ID: String(40) @title : '{i18n>PO_ID}';
         PARTNER_GUID: Association to master.businesspartner @title : '{i18n>PARTNER_KEY}';
         LIFECYCLE_STATUS: String(1);
@@ -80,12 +80,11 @@ context transaction {
         Items: Composition of  many poitems on Items.PARENT_KEY = $self;
     }
  
-    entity poitems: common.Amount,cuid{
-       // key NODE_KEY: common.Guid @title : '{i18n>PO_ITEM_NODE_KEY}';
+    entity poitems: common.Amount, cuid{
+        //key NODE_KEY: common.Guid @title : '{i18n>PO_ITEM_NODE_KEY}';
         PARENT_KEY: Association to purchaseorder @title : '{i18n>PO_NODE_KEY}';
         PO_ITEM_POS: Integer @title : '{i18n>ITEM_POS}';
         PRODUCT_GUID: Association to master.product @title : '{i18n>PRODUCT_ID}';
     }
-    }
-
+}
  
