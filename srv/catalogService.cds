@@ -1,12 +1,18 @@
 using { anubhav.db.master, anubhav.db.transaction } from '../db/dataModel';
 using { cappo.cds } from '../db/CDSView1';
- service CatalogService @(path: 'CatalogService') {
+ 
+ 
+service CatalogService @(path: 'CatalogService', requires: 'authenticated-user') {
  
     entity ProductSet as projection on master.product;
     entity BusinessPartnerSet as projection on master.businesspartner;
     entity BusinessAddressSet as projection on master.address;
    // @readonly
-    entity EmployeeSet as projection on master.employees;
+    entity EmployeeSet @(restrict: [
+                        { grant: ['READ'], to: 'Viewer', where: 'bankName = $user.BankName' },
+                        { grant: ['WRITE'], to: 'Admin' }
+                        ])
+                        as projection on master.employees;
     //@Capabilities : { Deletable: false }
     entity POs @(odata.draft.enabled: true) as projection on transaction.purchaseorder{
         *,
@@ -15,13 +21,13 @@ using { cappo.cds } from '../db/CDSView1';
             when 'P' then 'Pending'
             when 'N' then 'New'
             when 'A' then 'Approved'
-            when 'R' then 'Rejected'
+            when 'X' then 'Rejected'
             end as OverallStatus : String(10),
         case OVERALL_STATUS
             when 'P' then 2
             when 'N' then 2
             when 'A' then 3
-            when 'R' then 1
+            when 'X' then 1
             end as ColorCode : Integer,
     }
     actions{
@@ -32,14 +38,11 @@ using { cappo.cds } from '../db/CDSView1';
         }
         action boost() returns POs
     };
-
     function largestOrder() returns array of  POs;
-    entity POItems as projection on transaction.poitems;
+    //definition of the function
     function getOrderDefaults() returns POs;
+    entity POItems as projection on transaction.poitems;
     // entity OrderItems as projection on cds.CDSViews.ItemView;
     // entity Products as projection on cds.CDSViews.ProductView;
  
 }
- 
-
- 
