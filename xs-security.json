@@ -42,6 +42,7 @@
   ],
   "authorities": [
     "$ACCEPT_GRANTED_AUTHORITIES"
+    
   ],
   "oauth2-configuration": {
     "token-validity": 9000,
